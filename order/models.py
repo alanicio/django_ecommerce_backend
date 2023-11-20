@@ -1,5 +1,5 @@
 from django.db import models
-from items.models import Item
+from item.models import Item
 
 
 class DiscountType(models.Model):
