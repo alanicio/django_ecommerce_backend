@@ -1,28 +1,30 @@
 from django.db import models
 
 
-class DiscountTypes(models.Model):
-    description = models.TextField(null=true)
-    created_at = models.DateTimeField(auto_now_add=True, null=false)
-    enum = models.CharField(max_length=50, null=true)
+class DiscountType(models.Model):
+    description = models.TextField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=False)
+    enum = models.CharField(max_length=50, null=True)
+
 
 class Discount(models.Model):
-    start_date = models.DateField(auto_now=False, auto_now_add=False, null=true)
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=true)
-    type = models.CharField(, max_length=100, null=false)
-  """ discount_quantity integer [not null]
-  discount_type_id integer [not null]
-  quantity_critera integer [null]
-  amount_criteria integer [null] """
+    start_date = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    type = models.CharField(max_length=100, null=False)
+    discount_quantity = models.IntegerField(null=False)
+    discount_type = models.ForeignKey(DiscountType, on_delete=models.CASCADE)
+    quantity_critera = models.IntegerField(null=True)
+    amount_criteria = models.IntegerField(null=True)
+
 
 class Order(models.Model):
-    country = models.CharField(max_length=200, null=false)
-    city = models.CharField(max_length=200, null=false)
-    neighborhood = models.CharField(max_length=200, null=false)
-    street = models.CharField(max_length=200, null=false)
-    exterior_number = models.CharField(max_length=10, null=false)
-    interior_number = models.CharField(max_length=10, null=true)
-    subtotal = models.FloatField(null=false)
-    discount_id = models.ForeignKey(Discount, on_delete=models.CASCADE)
-    total = models.FloatField(null=false))
-    created_at = models.DateTimeField(auto_now_add=True, null=false)
+    country = models.CharField(max_length=200, null=False)
+    city = models.CharField(max_length=200, null=False)
+    neighborhood = models.CharField(max_length=200, null=False)
+    street = models.CharField(max_length=200, null=False)
+    exterior_number = models.CharField(max_length=10, null=False)
+    interior_number = models.CharField(max_length=10, null=True)
+    subtotal = models.FloatField(null=False)
+    discount = models.ForeignKey(Discount, on_delete=models.CASCADE)
+    total = models.FloatField(null=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=False)
