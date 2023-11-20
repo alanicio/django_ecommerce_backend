@@ -1,4 +1,5 @@
 from django.db import models
+from items.models import Item
 
 
 class DiscountType(models.Model):
@@ -28,3 +29,10 @@ class Order(models.Model):
     discount = models.ForeignKey(Discount, on_delete=models.CASCADE)
     total = models.FloatField(null=False)
     created_at = models.DateTimeField(auto_now_add=True, null=False)
+    items = models.ManyToManyField(Item, through="ItemOrder")
+
+
+class ItemOrder(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=False)
+    quantity = models.IntegerField(null=False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
