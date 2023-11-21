@@ -39,16 +39,22 @@ class OrderSerializer(serializers.ModelSerializer):
             subtotal += amount
         return subtotal
 
+    def getIds(item):
+        logger.info("------------------getIds")
+        logger.info(item)
+        return item["id"]
+
     def create(self, validated_data):
         request = self.context["request"]
-        logger.info("REQUEST")
-        logger.info(repr(request.data))
-        logger.info(repr(request.data.get("items")))
-        subtotal = self.getSubtotal(request.data.get("items"))
+        items = request.data.get("items")
+        subtotal = self.getSubtotal(items)
         validated_data["total"] = subtotal
         validated_data["subtotal"] = subtotal
-        logger.info("------VALIDATED DATA------")
-        logger.info(repr(validated_data))
+        logger = logging.getLogger("mylogger")
+        logger.info("------------------map")
+        ids = [element["id"] for element in items]
+        logger.info(ids)
+        validated_data["items"] = [element["id"] for element in items]
         instance = super().create(validated_data)
         return instance
 
