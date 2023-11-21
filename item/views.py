@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from .models import Item
 from .serializer import ItemSerializer
-import logging
+from django.db.models import Q
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -11,8 +11,8 @@ class ItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Item.objects.all()
         search = self.request.query_params.get("search")
-        logger = logging.getLogger("mylogger")
-        logger.info(self.request.query_params)
         if search is not None:
-            queryset = queryset.filter(name=search)
+            queryset = queryset.filter(
+                Q(name__icontains=search) | Q(description__icontains=search)
+            )
         return queryset
