@@ -26,7 +26,7 @@ class Order(models.Model):
     exterior_number = models.CharField(max_length=10, null=False)
     interior_number = models.CharField(max_length=10, null=True)
     subtotal = models.FloatField(null=False)
-    discount = models.ForeignKey(Discount, on_delete=models.CASCADE)
+    discount = models.ForeignKey(Discount, on_delete=models.CASCADE, null=True)
     total = models.FloatField(null=False)
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     items = models.ManyToManyField(Item, through="ItemOrder")
