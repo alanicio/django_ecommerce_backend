@@ -35,7 +35,7 @@ class OrderSerializer(serializers.ModelSerializer):
         logger.info(repr(items))
         subtotal = 0
         for item in items:
-            amount = item.quantity * item.price
+            amount = item["quantity"] * item["price"]
             subtotal += amount
         return subtotal
 
@@ -45,8 +45,8 @@ class OrderSerializer(serializers.ModelSerializer):
         logger.info(repr(request.data))
         logger.info(repr(request.data.get("items")))
         subtotal = self.getSubtotal(request.data.get("items"))
-        validated_data.total = subtotal
-        validated_data.subtotal = subtotal
+        validated_data["total"] = subtotal
+        validated_data["subtotal"] = subtotal
         logger.info("------VALIDATED DATA------")
         logger.info(repr(validated_data))
         instance = super().create(validated_data)
