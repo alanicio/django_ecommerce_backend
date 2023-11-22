@@ -19,11 +19,18 @@ class DiscountSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ItemOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemOrder
+        fields = "__all__"
+
+
 class OrderSerializer(serializers.ModelSerializer):
     items = ItemSerializer(read_only=True, many=True)
     subtotal = serializers.FloatField(required=False)
     total = serializers.FloatField(required=False)
     interior_number = serializers.CharField(allow_blank=True)
+    itemOrders = ItemOrderSerializer(many=True, write_only=True, required=False)
 
     class Meta:
         model = Order
@@ -31,18 +38,13 @@ class OrderSerializer(serializers.ModelSerializer):
         optional_fields = ["total", "subtotal", "interior_number"]
 
     def getSubtotal(self, items):
-        logger.info("------ITEMS------")
-        logger.info(repr(items))
         subtotal = 0
         for item in items:
             amount = item["quantity"] * item["price"]
             subtotal += amount
         return subtotal
 
-    def getIds(item):
-        logger.info("------------------getIds")
-        logger.info(item)
-        return item["id"]
+    """ def getItemOrder(self, items, order): """
 
     def create(self, validated_data):
         request = self.context["request"]
@@ -50,14 +52,13 @@ class OrderSerializer(serializers.ModelSerializer):
         subtotal = self.getSubtotal(items)
         validated_data["total"] = subtotal
         validated_data["subtotal"] = subtotal
-        logger = logging.getLogger("mylogger")
-        logger.info("------------------map")
-        ids = [element["id"] for element in items]
-        logger.info(ids)
-        validated_data["items"] = [element["id"] for element in items]
-        instance = super().create(validated_data)
-        return instance
+        order = Order.objects.create(**validated_data)
+        for itemIteration in items:
+            quantity = itemIteration.pop("quantity")
+            item, created = Item.objects.get_or_create(**itemIteration)
+            ItemOrder.objects.create(order=order, quantity=quantity, item=item)
+        return order
 
     def get_validation_exclusions(self):
         exclusions = super(OrderSerializer, self).get_validation_exclusions()
-        return exclusions + ["subtotal", "total"]
+        return exclusions + ["subtotal", "total", "itemOrders"]
