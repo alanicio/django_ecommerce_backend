@@ -1,10 +1,6 @@
 from rest_framework import serializers
-
 from item.serializer import ItemSerializer
 from .models import *
-import logging
-
-logger = logging.getLogger("mylogger")
 
 
 class DiscountTypeSerializer(serializers.ModelSerializer):
@@ -43,8 +39,6 @@ class OrderSerializer(serializers.ModelSerializer):
             amount = item["quantity"] * item["price"]
             subtotal += amount
         return subtotal
-
-    """ def getItemOrder(self, items, order): """
 
     def create(self, validated_data):
         request = self.context["request"]
